@@ -32,6 +32,16 @@ export function Footer() {
                 Öğrenci paneli
               </Link>
             </li>
+            <li>
+              <Link href="/ogretmen-ol" className="hover:text-white">
+                Öğretmen ol
+              </Link>
+            </li>
+            <li>
+              <Link href="/giris" className="hover:text-white">
+                Giriş
+              </Link>
+            </li>
           </ul>
         </div>
         <div>

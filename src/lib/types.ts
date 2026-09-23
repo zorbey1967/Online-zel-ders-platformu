@@ -10,6 +10,16 @@ export type Subject =
 
 export type Level = "İlkokul" | "Ortaokul" | "Lise" | "Üniversite" | "Yetişkin";
 
+export type UserRole = "student" | "teacher";
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  teacherId?: string;
+}
+
 export interface Teacher {
   id: string;
   name: string;
@@ -27,19 +37,18 @@ export interface Teacher {
   highlights: string[];
 }
 
-export interface LessonSlot {
-  id: string;
-  day: string;
-  time: string;
-}
-
 export interface BookedLesson {
   id: string;
   teacherId: string;
   teacherName: string;
+  studentId: string;
+  studentName: string;
   subject: Subject;
   date: string;
   time: string;
+  slot: string;
+  note?: string;
   status: "upcoming" | "completed" | "cancelled";
-  meetingUrl?: string;
+  meetingUrl: string;
+  createdAt: string;
 }

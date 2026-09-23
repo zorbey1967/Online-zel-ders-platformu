@@ -1,13 +1,16 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import type { Teacher } from "@/lib/types";
+import { useApp } from "@/context/AppContext";
 import { formatPrice } from "@/data/teachers";
+import type { Subject, Teacher } from "@/lib/types";
 
 export function BookingForm({ teacher }: { teacher: Teacher }) {
   const router = useRouter();
-  const [subject, setSubject] = useState(teacher.subjects[0]);
+  const { user, bookLesson } = useApp();
+  const [subject, setSubject] = useState<Subject>(teacher.subjects[0]);
   const [slot, setSlot] = useState(teacher.availability[0] ?? "");
   const [note, setNote] = useState("");
   const [done, setDone] = useState(false);
@@ -17,11 +20,23 @@ export function BookingForm({ teacher }: { teacher: Teacher }) {
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!user) {
+      router.push(`/giris?next=/ogretmenler/${teacher.id}`);
+      return;
+    }
     startTransition(() => {
+      const lesson = bookLesson({
+        teacherId: teacher.id,
+        teacherName: teacher.name,
+        subject,
+        slot,
+        note,
+      });
+      if (!lesson) return;
       setDone(true);
       window.setTimeout(() => {
         router.push("/panel");
-      }, 1200);
+      }, 1100);
     });
   }
 
@@ -52,13 +67,26 @@ export function BookingForm({ teacher }: { teacher: Teacher }) {
         </p>
       </div>
 
+      {!user && (
+        <p className="rounded-xl bg-[var(--fog)] px-3 py-2 text-sm text-[var(--ink-muted)]">
+          Rezervasyon için{" "}
+          <Link
+            href={`/giris?next=/ogretmenler/${teacher.id}`}
+            className="font-medium text-[var(--accent-deep)] underline-offset-2 hover:underline"
+          >
+            giriş yap
+          </Link>
+          .
+        </p>
+      )}
+
       <label className="block space-y-2">
         <span className="text-xs uppercase tracking-[0.14em] text-[var(--ink-muted)]">
           Ders
         </span>
         <select
           value={subject}
-          onChange={(e) => setSubject(e.target.value as typeof subject)}
+          onChange={(e) => setSubject(e.target.value as Subject)}
           className="field"
         >
           {teacher.subjects.map((s) => (
@@ -105,7 +133,11 @@ export function BookingForm({ teacher }: { teacher: Teacher }) {
       </label>
 
       <button type="submit" disabled={isPending || !slot} className="btn-primary w-full">
-        {isPending ? "Kaydediliyor…" : "Rezervasyonu onayla"}
+        {isPending
+          ? "Kaydediliyor…"
+          : user
+            ? "Rezervasyonu onayla"
+            : "Giriş yap ve ayırt"}
       </button>
     </form>
   );

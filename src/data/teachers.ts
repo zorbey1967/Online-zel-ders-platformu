@@ -1,4 +1,15 @@
-import type { BookedLesson, Teacher } from "@/lib/types";
+import type { Subject, Teacher } from "@/lib/types";
+
+export type DemoLessonSeed = {
+  id: string;
+  teacherId: string;
+  teacherName: string;
+  subject: Subject;
+  date: string;
+  time: string;
+  status: "upcoming" | "completed" | "cancelled";
+  meetingUrl?: string;
+};
 
 export const teachers: Teacher[] = [
   {
@@ -117,7 +128,7 @@ export const subjects = [
   "Tarih",
 ] as const;
 
-export const demoLessons: BookedLesson[] = [
+export const demoLessons: DemoLessonSeed[] = [
   {
     id: "l1",
     teacherId: "ayse-kaya",

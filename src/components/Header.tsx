@@ -3,17 +3,22 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-
-const links = [
-  { href: "/ogretmenler", label: "Öğretmenler" },
-  { href: "/#nasil", label: "Nasıl çalışır" },
-  { href: "/panel", label: "Panelim" },
-];
+import { useApp } from "@/context/AppContext";
 
 export function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const { user, logout, ready } = useApp();
   const onHero = pathname === "/";
+
+  const links = [
+    { href: "/ogretmenler", label: "Öğretmenler" },
+    { href: "/#nasil", label: "Nasıl çalışır" },
+    {
+      href: user?.role === "teacher" ? "/ogretmen-panel" : "/panel",
+      label: user?.role === "teacher" ? "Öğretmen paneli" : "Panelim",
+    },
+  ];
 
   return (
     <header className="absolute inset-x-0 top-0 z-40">
@@ -31,7 +36,7 @@ export function Header() {
           Birebir
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex">
+        <nav className="hidden items-center gap-6 md:flex">
           {links.map((link) => {
             const active =
               link.href.startsWith("/") &&
@@ -55,6 +60,39 @@ export function Header() {
               </Link>
             );
           })}
+          {ready && user ? (
+            <div className="flex items-center gap-3">
+              <span
+                className={`max-w-[9rem] truncate text-sm ${
+                  onHero ? "text-white/75" : "text-[var(--ink-muted)]"
+                }`}
+              >
+                {user.name}
+              </span>
+              <button
+                type="button"
+                onClick={logout}
+                className={
+                  onHero
+                    ? "btn-ghost border-white/35 text-sm text-white hover:bg-white/10"
+                    : "btn-ghost text-sm"
+                }
+              >
+                Çıkış
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/giris"
+              className={
+                onHero
+                  ? "btn-ghost border-white/35 text-sm text-white hover:bg-white/10"
+                  : "btn-ghost text-sm"
+              }
+            >
+              Giriş
+            </Link>
+          )}
           <Link href="/ogretmenler" className="btn-primary text-sm">
             Ders bul
           </Link>
@@ -97,6 +135,22 @@ export function Header() {
                 {link.label}
               </Link>
             ))}
+            {ready && user ? (
+              <button
+                type="button"
+                onClick={() => {
+                  logout();
+                  setOpen(false);
+                }}
+                className="py-2 text-left"
+              >
+                Çıkış ({user.name})
+              </button>
+            ) : (
+              <Link href="/giris" onClick={() => setOpen(false)} className="py-2">
+                Giriş
+              </Link>
+            )}
             <Link
               href="/ogretmenler"
               onClick={() => setOpen(false)}

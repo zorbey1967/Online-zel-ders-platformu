@@ -156,9 +156,14 @@ export default function Home() {
                 LGS, YKS, IELTS ve kariyer odaklı dersler
               </li>
             </ul>
-            <Link href="/panel" className="btn-primary mt-10 inline-flex">
-              Panele git
-            </Link>
+            <div className="mt-10 flex flex-wrap gap-3">
+              <Link href="/panel" className="btn-primary inline-flex">
+                Panele git
+              </Link>
+              <Link href="/ogretmen-ol" className="btn-ghost inline-flex">
+                Öğretmen ol
+              </Link>
+            </div>
           </div>
         </div>
       </section>
